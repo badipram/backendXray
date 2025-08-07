@@ -1,5 +1,5 @@
 flask
 flask-cors
 ultralytics
-opencv-python
-numpy
+opencv-python-headless
+gdown

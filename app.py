@@ -5,12 +5,21 @@ import os
 import uuid
 import cv2
 import base64
+import gdown
 
 app = Flask(__name__)
 CORS(app)
 
-model = YOLO("yolov8n-fracture.pt")
+MODEL_PATH = "yolov8n-fracture.pt"
+if not os.path.exists(MODEL_PATH):
+    print("📥 Downloading model...")
+    gdown.download("https://drive.google.com/uc?id=1cPTgDraDSiKCugxAPP5XEPUCFUkvAUyd", MODEL_PATH, quiet=False)
+
+model = YOLO(MODEL_PATH)
 os.makedirs("uploads", exist_ok=True)
+
+# model = YOLO("yolov8n-fracture.pt")
+# os.makedirs("uploads", exist_ok=True)
 
 def img_to_base64(img_path):
     with open(img_path, "rb") as f:

@@ -1,2 +1,4 @@
 uploads/
-Proyek_X-Ray_YOLO8n.ipynb/
+*.ipynb
+__pycache__/
+*.pt
