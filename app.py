@@ -1,44 +1,3 @@
-# from flask import Flask, request, send_file, jsonify
-# from flask_cors import CORS
-# from ultralytics import YOLO
-# import os
-# import uuid
-# import cv2
-
-# app = Flask(__name__)
-# CORS(app)
-
-# model = YOLO("yolov8n-fracture.pt")
-# os.makedirs("uploads", exist_ok=True)
-
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     try:
-#         file = request.files['image']
-#         filename = f"{uuid.uuid4().hex}_{file.filename}"
-#         file_path = os.path.join("uploads", filename)
-#         file.save(file_path)
-
-#         # Predict
-#         results = model(file_path)
-#         result = results[0]
-
-#         # Plot and save the result image with bounding boxes
-#         plot_img = result.plot()  # numpy array (BGR)
-#         out_path = os.path.join("uploads", f"pred_{filename}")
-#         cv2.imwrite(out_path, plot_img)
-
-#         os.remove(file_path)  # optional
-
-#         # Return the image with bounding boxes
-#         return send_file(out_path, mimetype='image/jpeg')
-#     except Exception as e:
-#         print("❌ Error during prediction:", e)
-#         return jsonify({"error": str(e)}), 500
-
-# if __name__ == "__main__":
-#     app.run(debug=True, port=5050)
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from ultralytics import YOLO
@@ -82,7 +41,7 @@ def predict():
         cv2.imwrite(enhanced_path, enhanced_img)
         enhanced_b64 = img_to_base64(enhanced_path)
 
-        # 3. Bounding box image
+        # 3. Bounding box image & detection info
         results = model(file_path)
         result = results[0]
         plot_img = result.plot()  # numpy array (BGR)
@@ -90,16 +49,25 @@ def predict():
         cv2.imwrite(pred_path, plot_img)
         pred_b64 = img_to_base64(pred_path)
 
+        # Detection info
+        detection_info = []
+        for box in result.boxes:
+            detection_info.append({
+                "confidence": float(box.conf[0]),
+                "bbox": [float(x) for x in box.xyxy[0].tolist()]
+            })
+
         # Optional: clean up files
         os.remove(file_path)
         os.remove(enhanced_path)
         os.remove(pred_path)
 
-        # Return all images as base64
+        # Return all images as base64 + detection info
         return jsonify({
             "original": original_b64,
             "enhanced": enhanced_b64,
-            "predicted": pred_b64
+            "predicted": pred_b64,
+            "detection_info": detection_info
         })
     except Exception as e:
         print("❌ Error during prediction:", e)
