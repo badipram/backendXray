@@ -1,4 +1,4 @@
 uploads/
 *.ipynb
 __pycache__/
-# *.pt
+*.pt
