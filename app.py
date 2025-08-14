@@ -4,6 +4,9 @@ import os
 import uuid
 import cv2
 import base64
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 CORS(app)
@@ -81,7 +84,8 @@ def predict():
         })
 
     except Exception as e:
-        print("❌ Error during prediction:", e)
+        # print("❌ Error during prediction:", e)
+        logging.exception("❌ Error during prediction:")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
