@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 
-# Install libGL dan dependencies lain yang dibutuhkan OpenCV
-RUN apt-get update && apt-get install -y libgl1 && rm -rf /var/lib/apt/lists/*
+# Install libGL, libglib2.0-0, dan dependencies lain yang dibutuhkan OpenCV
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY . /app
